@@ -1,78 +1,121 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
+import { Link } from 'react-router-dom'
 
-const cssCommon = css`
+const horizontalCenter = css`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 `
 
-const SearchContainer = styled.div`
-  border-bottom: 1px solid #0cde8b;
+const Container = styled.div`
   position: relative;
-  padding: 30px 0;
   width: 100%;
-  display: block;
+  border-bottom: 2px solid #0bde8b;
   background-color: #fff;
+  padding: 20px 60px;
+  box-sizing: border-box;
 `
 
-const BeforeIcon = styled.div`
-  ${cssCommon}
-  background-image: url('https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png');
-  background-size: 467px 442px;
-  background-repeat: no-repeat;
-  background-position: -164px -343px;
+const ArrowIcon = styled(Link)`
+  ${horizontalCenter}
+  left: 18px;
+  display: block;
   width: 21px;
   height: 18px;
-  left: 20px;
+  background-position: -164px -343px;
+  vertical-align: top;
+  background-image: url(https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png);
+  background-size: 467px 442px;
+  background-repeat: no-repeat;
+`
+
+const SearchIcon = styled.span`
+  ${horizontalCenter}
+  right: 18px;
+  width: 24px;
+  height: 24px;
+  background-position: -356px -260px;
+  display: inline-block;
+  overflow: hidden;
+  color: transparent;
+  vertical-align: middle;
+  background-image: url(https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png);
+  background-size: 467px 442px;
+  background-repeat: no-repeat;
+`
+
+const RemoveIcon = styled.span`
+  ${horizontalCenter}
+  right: 0px;
+  width: 20px;
+  height: 20px;
+  background-position: -389px -29px;
+  display: inline-block;
+  overflow: hidden;
+  color: transparent;
+  vertical-align: top;
+  background-image: url(https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png);
+  background-size: 467px 442px;
+  background-repeat: no-repeat;
 `
 
 const InputContainer = styled.div`
-  position: absolute;
-  width: calc(100% - 110px);
-  left: 60px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
 `
 
 const Input = styled.input`
-  font-size: 16px;
-  &::placeholder {
-    color: #ddd;
+  width: 100%;
+  background-color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  box-sizing: border-box;
+
+  ${({ active }) =>
+    active &&
+    `
+    padding-right: 25px; 
+  `}
+`
+
+function SearchBar({ onAddKeyword }) {
+  // 1. 검색어를 state 로 다루도록 변경
+  // 2. 이벤트 연결
+  // 3. Link to 설명
+  const [keyword, setKeyword] = useState('')
+
+  const handleKeyword = (event) => {
+    setKeyword(event.target.value)
   }
-`
 
-const SearchIcon = styled.div`
-  ${cssCommon}
-  background-image: url('https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png');
-  background-size: 467px 442px;
-  background-repeat: no-repeat;
-  background-position: -356px -260px;
-  width: 24px;
-  height: 24px;
-  right: 14px;
-`
-const ResetIcon = styled.div`
-  ${cssCommon}
-  background-image: url('https://s.pstatic.net/static/www/m/uit/2020/sp_search.623c21.png');
-  background-size: 467px 442px;
-  background-repeat: no-repeat;
-  background-position: -389px -29px;
-  width: 20px;
-  height: 20px;
-  right: 0;
-`
+  const handleEnter = (event) => {
+    if (keyword && event.keyCode === 13) {
+      onAddKeyword(keyword)
+      setKeyword('')
+    }
+  }
 
-function SearchBar() {
+  const handleClearKeyword = () => {
+    setKeyword('')
+  }
+
+  const hasKeyword = !!keyword
+
   return (
-    <SearchContainer>
-      <BeforeIcon />
+    <Container>
+      <ArrowIcon to="/" />
       <InputContainer>
-        <Input type="text" placeholder="검색어를 입력해주세요." />
-        <ResetIcon />
+        <Input
+          placeholder="검색어를 입력해주세요"
+          active={hasKeyword}
+          value={keyword}
+          onChange={handleKeyword}
+          onKeyDown={handleEnter}
+        />
+        {hasKeyword && <RemoveIcon onClick={handleClearKeyword} />}
       </InputContainer>
       <SearchIcon />
-    </SearchContainer>
+    </Container>
   )
 }
 
